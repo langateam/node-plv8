@@ -1,6 +1,6 @@
 {
   "name": "plv8",
-  "description": "Run node.js modules in PostgreSQL",
+  "description": "require() node.js modules in plv8",
   "version": "0.7.0",
   "keywords": [
     "postgres",
@@ -14,13 +14,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/clkao/plv8x.git"
+    "url": "git://github.com/langateam/plv8.git"
   },
   "author": "Langa Team <hello@langa.io>",
   "contributors": [
     {
       "name": "Chia-liang Kao",
       "email": "clkao@clkao.org"
+    },
+    {
+      "name": "Travis Webb",
+      "email": "tjwebb@langa.io"
     }
   ],
   "scripts": {
@@ -32,11 +36,9 @@
   "dependencies": {
     "browserify": "^13.0.1",
     "js-yaml": "3.0.x",
-    "optimist": "0.6.x",
+    "optimist": "^0.6.1",
     "pg": "^4.2.0",
-    "pretty-bytes": "^1.0.3",
-    "resolve": "0.6.x",
-    "tmp": "0.0.x"
+    "pretty-bytes": "^1.0.3"
   },
   "devDependencies": {
     "mocha": "^2.1.0",
