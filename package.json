@@ -37,7 +37,7 @@
     "browserify": "^13.0.1",
     "js-yaml": "3.0.x",
     "optimist": "^0.6.1",
-    "pg": "^4.2.0",
+    "pg": "^5.1.0",
     "pretty-bytes": "^1.0.3"
   },
   "devDependencies": {
