@@ -65,4 +65,4 @@ MIT
 [daviddm-image]: http://img.shields.io/david/langateam/plv8.svg?style=flat
 [daviddm-url]: https://david-dm.org/langateam/plv8
 [codeclimate-image]: https://img.shields.io/codeclimate/github/langateam/plv8.svg?style=flat
-[codeclimate-url]: https://codeclimate.com/github/langatam/plv8
+[codeclimate-url]: https://codeclimate.com/github/langateam/plv8
