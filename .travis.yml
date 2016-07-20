@@ -1,40 +1,32 @@
-before_install:
-  - psql --version
-  - sudo /etc/init.d/postgresql stop
-  - sudo apt-get -y --purge remove postgresql libpq-dev libpq5 postgresql-client-common postgresql-common
-  - sudo rm -rf /var/lib/postgresql
-  - wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-  - sudo sh -c "echo deb http://apt.postgresql.org/pub/repos/apt/ precise-pgdg main $PGVERSION >> /etc/apt/sources.list.d/postgresql.list"
-  - sudo sh -c "echo deb http://apt.postgresql.org/pub/repos/apt/ precise-pgdg-testing main $PGVERSION >> /etc/apt/sources.list.d/postgresql.list"
-  - sudo apt-get update -qq
-  - sudo apt-get -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::="--force-confnew" install postgresql-$PGVERSION postgresql-server-dev-$PGVERSION postgresql-$PGVERSION-plv8
-  - sudo chmod 777 /etc/postgresql/$PGVERSION/main/pg_hba.conf
-  - sudo echo "local   all         postgres                          trust" > /etc/postgresql/$PGVERSION/main/pg_hba.conf
-  - sudo echo "local   all         all                               trust" >> /etc/postgresql/$PGVERSION/main/pg_hba.conf
-  - sudo echo "host    all         all         127.0.0.1/32          trust" >> /etc/postgresql/$PGVERSION/main/pg_hba.conf
-  - sudo echo "host    all         all         ::1/128               trust" >> /etc/postgresql/$PGVERSION/main/pg_hba.conf
-  - sudo /etc/init.d/postgresql restart
+language: node_js
+node_js:
+- 6
+
+addons:
+  apt:
+    packages:
+    - postgresql-9.4-plv8
+
+services:
+- postgresql
 
 before_script:
-  - createuser -U postgres -s travis
-  - psql -c 'create database test' -U postgres
-
-script:
-  - "TESTDBNAME=test npm run test"
-
-notifications:
-  irc: "irc.freenode.org#pgrest"
-
-language: node_js
+- psql -c 'create database ci;' -U postgres
 
 env:
-  matrix:
-    - PGVERSION=9.4
-    - PGVERSION=9.3
-    - PGVERSION=9.2
-    - PGVERSION=9.1
-    - PGVERSION=9.0
+  global:
+  - PLV8DB: postgres@localhost:5432/ci
 
-node_js:
-  - 0.10
+notifications:
+  email: false
 
+deploy:
+  provider: npm
+  email: hello@langa.io
+  api_key:
+    secure: CXEIlbOJsRyow3/Khr8lVenL8/tO6iiiWvqR+pk+jQlc4sEPXSHdBFQAffnOeRbVEdbV1pSVYpctZsaUmAFiFpmcWFbNumkMfgT1Sg/Uq9LkBL/g4Rrz4cadwC/no2M+xpXccVH2/QgO5aqw8q5nj+rWjq3S/oflCmeKlwktr5fzhFpZzAN3YovqLBFkC2ItHTvjiv30ITpZQDhITzEqNV8K29hvk9mQDAjwm7Uns1vDRp8BoB42oYF8SFeJ44RJ0Px+cZ98WLvA0zb1bsOLNx0jnO9O0o5toFQkA+E63yWA3b7y6mq1pOd2WoVBuijk7lsaqrHIZnImkZbQsMEyNWT1xG98DV+M6C7b3GR4pO+hGtld+2a50h1sppDF1EkgokLu5bnKVIteMFAThb5dloHU2VT74XhIHzevyBvHo/XRIBJhT/2IZdHS8NVuF+B9aZ1sm0j/VWOJ8sFY9biQBIdAxLb1nH/vlCjhLodDD3tc6IXo3cXIULcOKTwjZZdplyoApGAtCFc6Ga6wD5aqaing3/DyV/nhJ7YG3HDeMAS0oYHxO83rgpPkQArE/l75qGs8j5VN7fcj1BCn66sHtEQ8IpbDwlnWW31YU4qPZe9UCqLYuJX27UoDNQViJbeQhgotTf38nK9cfT8xjxaWdYDMzzJiJHSNPnN/PjV5yRU=
+  on:
+    tags: true
+    repo: langateam/plv8
+    all_branches: true
+    node: 6

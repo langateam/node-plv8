@@ -82,7 +82,6 @@ module.exports = class PLV8 {
   eval (f) {
     const es5 = babel.transform(f.toString(), evalOptions)
     const code = es5.code.slice(0, -1)
-    console.log('code', code)
     return this.knex.raw('select v8.eval(?) as val', [ `${code}()` ])
       .then(({ rows: [ result ] }) => {
         return result && result.val
