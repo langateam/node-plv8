@@ -15,7 +15,9 @@ before_script:
 
 env:
   global:
-  - PLV8DB: postgres@localhost:5432/ci
+    - PLV8_HOST: localhost
+    - PLV8_USER: postgres
+    - PLV8_DATABASE: ci
 
 notifications:
   email: false

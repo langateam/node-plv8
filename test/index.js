@@ -5,7 +5,12 @@ const PLV8 = require('../')
 describe('plv8', () => {
   const plv8 = new PLV8(knex({
     client: 'pg',
-    connection: process.env.PLV8DB
+    connection: {
+      host: process.env.PLV8_HOST,
+      user: process.env.PLV8_USER,
+      password: process.env.PLV8_PASSWORD,
+      database: process.env.PLV8_DATABASE
+    }
   }))
   describe('#install', () => {
     it('should install a module', () => {
