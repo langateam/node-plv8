@@ -10,14 +10,11 @@ addons:
 services:
 - postgresql
 
-before_script:
-- psql -c 'create database ci;' -U postgres
-
 env:
   global:
     - PLV8_HOST: localhost
     - PLV8_USER: postgres
-    - PLV8_DATABASE: ci
+    - PLV8_DATABASE: postgres
 
 notifications:
   email: false
