@@ -3,6 +3,7 @@ node_js:
 - 6
 
 addons:
+  postgresql: "9.4"
   apt:
     packages:
     - postgresql-9.4-plv8
