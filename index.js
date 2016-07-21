@@ -23,9 +23,7 @@ const installOptions = {
 module.exports = class PLV8 {
 
   install (moduleId, cwd = process.cwd()) {
-    console.log('plv8: installing module', moduleId, '...')
     let modulePath, pkgPath, pkg
-    //const name = moduleId.replace(/^@\w+\//, '')
 
     try {
       modulePath = require.resolve(path.resolve(cwd, 'node_modules', moduleId))
@@ -73,7 +71,6 @@ module.exports = class PLV8 {
   }
 
   uninstall (moduleId) {
-    //console.log('plv8: un-installing module', moduleId, '...')
     const name = moduleId.replace(/^@\w+\//, '')
     return this.knex('v8.modules').where({ name }).del()
       .then(() => true)
