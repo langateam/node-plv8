@@ -9,9 +9,6 @@
     "plv8"
   ],
   "main": "index.js",
-  "bin": {
-    "plv8": "bin/plv8x"
-  },
   "repository": {
     "type": "git",
     "url": "git://github.com/langateam/plv8.git"
