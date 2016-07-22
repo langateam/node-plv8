@@ -68,9 +68,9 @@ MIT
 
 [npm-image]: https://img.shields.io/npm/v/plv8.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/plv8
-[ci-image]: https://img.shields.io/travis/langateam/plv8/master.svg?style=flat-square
-[ci-url]: https://travis-ci.org/langateam/plv8
-[daviddm-image]: http://img.shields.io/david/langateam/plv8.svg?style=flat-square
-[daviddm-url]: https://david-dm.org/langateam/plv8
-[codeclimate-image]: https://img.shields.io/codeclimate/github/langateam/plv8.svg?style=flat-square
-[codeclimate-url]: https://codeclimate.com/github/langateam/plv8
+[ci-image]: https://img.shields.io/travis/langateam/node-plv8/master.svg?style=flat-square
+[ci-url]: https://travis-ci.org/langateam/node-plv8
+[daviddm-image]: http://img.shields.io/david/langateam/node-plv8.svg?style=flat-square
+[daviddm-url]: https://david-dm.org/langateam/node-plv8
+[codeclimate-image]: https://img.shields.io/codeclimate/github/langateam/node-plv8.svg?style=flat-square
+[codeclimate-url]: https://codeclimate.com/github/langateam/node-plv8
