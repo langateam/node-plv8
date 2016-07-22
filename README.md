@@ -1,19 +1,20 @@
-# plv8
+# node-plv8
 
 [![NPM version][npm-image]][npm-url]
 [![Build status][ci-image]][ci-url]
 [![Dependency Status][daviddm-image]][daviddm-url]
 [![Code Climate][codeclimate-image]][codeclimate-url]
 
-Run Node modules in [PLV8](https://github.com/plv8/plv8).
+Use node modules in [PLV8](https://github.com/plv8/plv8). Optimize your Node.js Backend by offloading work directly onto the database (PostgreSQL).
 
 This is a fork of [plv8x](https://github.com/clkao/plv8x) that has been streamlined down to the essentials. Important differences:
 
-- 90% smaller than plv8x (20kb vs. 300+ kb)
+- 90% smaller than plv8x (~20kb vs. 300+ kb)
 - Removed [node-pg-native](https://github.com/brianc/node-pg-native)
 - Removed Livescript / Coffeescript Support
-- Removed [`-f`](https://github.com/clkao/plv8x#calling-conventions-for-user-functions) command
+- Removed CLI
 - Removed unused/unneeded dependencies
+- Build modules using babel instead of browserify
 
 ## Install
 
@@ -21,35 +22,42 @@ This is a fork of [plv8x](https://github.com/clkao/plv8x) that has been streamli
 $ npm install --save plv8
 ```
 
-### Usage
+## Usage
 
 ### API
 
-TODO
+#### `install (module, [cwd])`
 
+#### `uninstall (module)`
 
-### CLI
+#### `eval (code)`
 
-Install with `-g` to use CLI
+### Example
 
-```sh
-$ npm install -g plv8
-```
+```js
+const PLV8 = require('plv8')
+const plv8 = new PLV8({
+  client: 'pg',
+  connection: {
+    // knex.js connection object
+  }
+})
 
-```
-Usage: plv8 {OPTIONS}
-
-Options:
-  --db, -d       database connection string
-  --list, -l     List bundles
-  --purge        Purge bundles
-  --import, -i   Import bundles
-  --delete       Delete bundles
-  --query, -c    Execute query
-  --eval, -e     Eval the given expression in plv8x context
-  --require, -r  Require the given file and eval in plv8x context
-  --json, -j     Use JSON for output
-  --help, -h     Show this message
+plv8.install(require.resolve('lodash'))
+  .then(() => {
+    return plv8.eval(() => {
+      const _ = require('lodash')
+      return _.map([ 1, 2, 3 ], e => {
+        return e + 1
+      })
+    })
+  })
+  .then(result => {
+    // result = [ 2, 3, 4 ]
+  })
+  .catch(err => {
+    // handle error
+  })
 ```
 
 ## License
