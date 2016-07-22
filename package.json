@@ -4,9 +4,12 @@
   "version": "1.0.1",
   "keywords": [
     "postgres",
+    "postgresql",
     "pg",
     "database",
-    "plv8"
+    "plv8",
+    "plnode",
+    "require"
   ],
   "main": "index.js",
   "repository": {
