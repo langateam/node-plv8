@@ -3,7 +3,7 @@ node_js:
 - 6
 
 addons:
-  postgresql: "9.4"
+  postgresql: '9.4'
   apt:
     packages:
     - postgresql-9.4-plv8
@@ -13,20 +13,24 @@ services:
 
 env:
   global:
-    - PLV8_HOST: localhost
-    - PLV8_USER: postgres
-    - PLV8_DATABASE: postgres
+  - PLV8_HOST: localhost
+  - PLV8_USER: postgres
+  - PLV8_DATABASE: postgres
 
 notifications:
   email: false
+  webhooks:
+    urls:
+    - https://webhooks.gitter.im/e/54f8a1e753f859f5ca1a
+    on_start: never
+    on_failure: change
 
 deploy:
   provider: npm
   email: hello@langa.io
   api_key:
-    secure: CXEIlbOJsRyow3/Khr8lVenL8/tO6iiiWvqR+pk+jQlc4sEPXSHdBFQAffnOeRbVEdbV1pSVYpctZsaUmAFiFpmcWFbNumkMfgT1Sg/Uq9LkBL/g4Rrz4cadwC/no2M+xpXccVH2/QgO5aqw8q5nj+rWjq3S/oflCmeKlwktr5fzhFpZzAN3YovqLBFkC2ItHTvjiv30ITpZQDhITzEqNV8K29hvk9mQDAjwm7Uns1vDRp8BoB42oYF8SFeJ44RJ0Px+cZ98WLvA0zb1bsOLNx0jnO9O0o5toFQkA+E63yWA3b7y6mq1pOd2WoVBuijk7lsaqrHIZnImkZbQsMEyNWT1xG98DV+M6C7b3GR4pO+hGtld+2a50h1sppDF1EkgokLu5bnKVIteMFAThb5dloHU2VT74XhIHzevyBvHo/XRIBJhT/2IZdHS8NVuF+B9aZ1sm0j/VWOJ8sFY9biQBIdAxLb1nH/vlCjhLodDD3tc6IXo3cXIULcOKTwjZZdplyoApGAtCFc6Ga6wD5aqaing3/DyV/nhJ7YG3HDeMAS0oYHxO83rgpPkQArE/l75qGs8j5VN7fcj1BCn66sHtEQ8IpbDwlnWW31YU4qPZe9UCqLYuJX27UoDNQViJbeQhgotTf38nK9cfT8xjxaWdYDMzzJiJHSNPnN/PjV5yRU=
+    secure: xl//JGtfs97f4kqO5rKI6GQzbcbqupJoSxqfZaQTG7TQslWDAdM/jwbKU8kXgP8cO8fZ+K7OXue5cdbLVYMdByf8Tl3d3Zo8Z3EUEpsI4H/RinAiNQErngXtJAHM2wIOgQCQdeAylqneRhlVTYehByF55L4OEDUo8umYnKh0mzITWrWhjycn/kyhFbHznjgTQnvgsOBz6wjD7YlPpmMOq474Ldn22nIsTuVxyHilY3i899IPD1BczNMN56mkOcchEZJOchuv11eBeiuLajpTUH/jIkZi1OQSYQqaree5sqAvjGnSoX1EsdFXQexFSNYsYtV1Va1+opzdkGMUnJ7Tf0P4a0Lr+fP53hayXRhKCnKJAJhGW0kJ6UK8y7qpI383zc+FGqTHGeCkFWbAVX1tWmYTtFKuyW94i36O6UIlXPDERIhQbC3xm6ERd+xYCbnJsFgFseYKNH1q+e8XGHd/SwRDlkEDfpQ+DOEKYxbDZcLdil76aLkwGtdstuDx1D/2fz+JzRU0XD2vZXah2+ceOytk7C4oi4E6PrKFx5MoDnhcgWwtYDcEMTXzqoMLJPMxlOkF37ksj58lgdkhqNt8j2lWBsy8kBsrBhJCuMCzH7/MVmWYJ7B8fULcqmEmEXM9TvZfgyEuOa6R5lXhiCGkb8+QScLQu7IGIebRqURTTsc=
   on:
     tags: true
-    repo: langateam/plv8
-    all_branches: true
+    repo: langateam/node-plv8
     node: 6
