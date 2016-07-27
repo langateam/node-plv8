@@ -30,6 +30,7 @@ module.exports = class PLV8 {
     }
     catch (e) {
       console.error(e)
+      return Promise.reject(e)
     }
 
     const es5 = babel.transformFileSync(modulePath, installOptions)
