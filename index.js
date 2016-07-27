@@ -23,12 +23,10 @@ const installOptions = {
 module.exports = class PLV8 {
 
   install (moduleId, cwd = process.cwd()) {
-    let modulePath, pkgPath, pkg
+    let modulePath
 
     try {
       modulePath = require.resolve(path.resolve(cwd, 'node_modules', moduleId))
-      pkgPath = require.resolve(path.resolve(cwd, 'node_modules', moduleId, 'package.json'))
-      pkg = require(pkgPath)
     }
     catch (e) {
       console.error(e)
@@ -60,10 +58,10 @@ module.exports = class PLV8 {
         return this.knex('v8.modules').select('*').where({ name: moduleId })
           .then(result => {
             if (result.length > 0) {
-              return this.knex('v8.modules').update({ code, pkg }).where({ name: moduleId })
+              return this.knex('v8.modules').update({ code }).where({ name: moduleId })
             }
             else {
-              return this.knex('v8.modules').insert({ code, pkg, name: moduleId })
+              return this.knex('v8.modules').insert({ code, name: moduleId })
             }
           })
       })
@@ -94,7 +92,6 @@ module.exports = class PLV8 {
         return this.knex.schema.createTableIfNotExists('v8.modules', table => {
           table.increments()
           table.text('name')
-          table.jsonb('pkg')
           table.text('code')
         })
       })
