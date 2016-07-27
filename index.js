@@ -86,7 +86,7 @@ module.exports = class PLV8 {
   init () {
     return this.knex.raw('create schema if not exists "v8"')
       .then(() => {
-        return this.knex.raw('create extension plv8')
+        return this.knex.raw('create extension if not exists plv8')
       })
       .then(() => {
         return this.knex.schema.createTableIfNotExists('v8.modules', table => {
