@@ -14,18 +14,26 @@ describe('plv8', () => {
   }))
   describe('#install', () => {
     it('should install a module', () => {
-      return plv8.install('testmodule', __dirname)
-        .then(moduleName => {
-          assert.equal(moduleName, 'testmodule')
-        })
+      return plv8.install({
+        modulePath: 'testmodule',
+        cwd: __dirname,
+        moduleName: 'testmodule'
+      })
+      .then(moduleName => {
+        assert.equal(moduleName, 'testmodule')
+      })
     })
   })
   describe('#uninstall', () => {
     before(() => {
-      return plv8.install('testmodule', __dirname)
-        .then(moduleName => {
-          assert.equal(moduleName, 'testmodule')
-        })
+      return plv8.install({
+        modulePath: 'testmodule',
+        cwd: __dirname,
+        moduleName: 'testmodule'
+      })
+      .then(moduleName => {
+        assert.equal(moduleName, 'testmodule')
+      })
     })
     it('should uninstall a module', () => {
       return plv8.uninstall('testmodule')
@@ -37,10 +45,14 @@ describe('plv8', () => {
   })
   describe('#eval', () => {
     before(() => {
-      return plv8.install('testmodule', __dirname)
-        .then(moduleName => {
-          assert.equal(moduleName, 'testmodule')
-        })
+      return plv8.install({
+        modulePath: 'testmodule',
+        cwd: __dirname,
+        moduleName: 'testmodule'
+      })
+      .then(moduleName => {
+        assert.equal(moduleName, 'testmodule')
+      })
     })
 
     it('should eval an arbitrary function', () => {

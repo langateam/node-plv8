@@ -22,15 +22,19 @@ const installOptions = {
 
 module.exports = class PLV8 {
 
-  install (moduleId, cwd = process.cwd()) {
-    let modulePath
+  install ({ modulePath, cwd = process.cwd(), moduleName }) {
 
     try {
-      modulePath = require.resolve(path.resolve(cwd, 'node_modules', moduleId))
+      modulePath = require.resolve(path.resolve(cwd, modulePath))
     }
     catch (e) {
-      console.error(e)
-      return Promise.reject(e)
+      try {
+        modulePath = require.resolve(path.resolve(cwd, 'node_modules', modulePath))
+      }
+      catch (e) {
+        console.error(e)
+        return Promise.reject(e)
+      }
     }
 
     const es5 = babel.transformFileSync(modulePath, installOptions)
@@ -56,17 +60,17 @@ module.exports = class PLV8 {
         }
       })
       .then(code => {
-        return this.knex('v8.modules').select('*').where({ name: moduleId })
+        return this.knex('v8.modules').select('*').where({ name: moduleName })
           .then(result => {
             if (result.length > 0) {
-              return this.knex('v8.modules').update({ code }).where({ name: moduleId })
+              return this.knex('v8.modules').update({ code }).where({ name: moduleName })
             }
             else {
-              return this.knex('v8.modules').insert({ code, name: moduleId })
+              return this.knex('v8.modules').insert({ code, name: moduleName })
             }
           })
       })
-      .then(() => moduleId)
+      .then(() => moduleName)
   }
 
   uninstall (moduleId) {
