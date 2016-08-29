@@ -1,20 +1,11 @@
 /*eslint no-console: 0 */
-const path = require('path')
 const bootstrapPlv8 = require('./lib/bootstrap')
 const babel = require('babel-core')
-const evalOptions = {
+const browserify = require('browserify')
+const babelify = require('babelify')
+const babelOptions = {
   presets: [
     require('babel-preset-es2015')
-  ],
-  ast: false,
-  babelrc: false
-}
-const installOptions = {
-  presets: [
-    require('babel-preset-es2015')
-  ],
-  plugins: [
-    require('babel-plugin-transform-es2015-modules-umd')
   ],
   ast: false,
   babelrc: false
@@ -22,55 +13,52 @@ const installOptions = {
 
 module.exports = class PLV8 {
 
-  install ({ modulePath, cwd = process.cwd(), moduleName }) {
+  install ({ modulePath, moduleName }) {
+    return this.init()
+    .then(() => {
+      return new Promise((resolve, reject) => {
+        browserify({ ignoreMissing: true, standalone: moduleName })
+          .transform(babelify, {
+            global: true,
+            presets: [
+              require('babel-preset-es2015')
+            ],
+            ast: false,
+            babelrc: false
+          })
+          .require(modulePath, { entry: true })
+          .bundle((err, buf) => {
+            if (err) return reject(err)
 
-    try {
-      modulePath = require.resolve(path.resolve(cwd, modulePath))
-    }
-    catch (e) {
-      try {
-        modulePath = require.resolve(path.resolve(cwd, 'node_modules', modulePath))
-      }
-      catch (e) {
-        console.error(e)
-        return Promise.reject(e)
-      }
-    }
+            const code = `
+              (function () {
+                var module = {
+                  exports: { }
+                };
+                var exports = module.exports;
+                ${buf.toString()}
+                return module
+              })()`
 
-    const es5 = babel.transformFileSync(modulePath, installOptions)
-    const code = `
-      (function () {
-        var module = {
-          exports: { }
-        };
-        var exports = module.exports;
-
-        ${es5.code}
-
-        return module
-      })()`
-
-    return this.knex.schema.hasTable('v8.modules')
-      .then(exists => {
-        if (exists) {
-          return code
-        }
-        else {
-          return this.init().then(() => code)
-        }
-      })
-      .then(code => {
-        return this.knex('v8.modules').select('*').where({ name: moduleName })
-          .then(result => {
-            if (result.length > 0) {
-              return this.knex('v8.modules').update({ code }).where({ name: moduleName })
-            }
-            else {
-              return this.knex('v8.modules').insert({ code, name: moduleName })
-            }
+            return resolve(code)
+          })
+          .on('error', err => {
+            console.error('Error: ', err.message)
           })
       })
-      .then(() => moduleName)
+    })
+    .then(code => {
+      return this.knex('v8.modules').select('*').where({ name: moduleName })
+        .then(result => {
+          if (result.length > 0) {
+            return this.knex('v8.modules').update({ code }).where({ name: moduleName })
+          }
+          else {
+            return this.knex('v8.modules').insert({ code, name: moduleName })
+          }
+        })
+    })
+    .then(() => moduleName)
   }
 
   uninstall (moduleId) {
@@ -80,11 +68,41 @@ module.exports = class PLV8 {
   }
 
   eval (f) {
-    const es5 = babel.transform(f.toString(), evalOptions)
+    let es5
+    const template = `
+      (function () {
+        try {
+          return (${f.toString()})()
+        }
+        catch (e) {
+          return {
+            error: true,
+            stack: e.stack,
+            message: e.message
+          }
+        }
+      })`
+
+    try {
+      es5 = babel.transform(template.toString(), babelOptions)
+    }
+    catch (e) {
+      console.error(e)
+      return Promise.reject(e)
+    }
     const code = es5.code.slice(0, -1)
+
     return this.knex.raw('select v8.eval(?) as val', [ `${code}()` ])
       .then(({ rows: [ result ] }) => {
-        return result && result.val
+        const val = result && result.val
+        if (val && val.error === true) {
+          const err = new Error(val.message)
+          err.stack = val.stack
+          return Promise.reject(err)
+        }
+        else {
+          return val || { }
+        }
       })
   }
 
