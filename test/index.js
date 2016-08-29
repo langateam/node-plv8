@@ -15,8 +15,7 @@ describe('plv8', () => {
   describe('#install', () => {
     it('should install a module', () => {
       return plv8.install({
-        modulePath: 'testmodule',
-        cwd: __dirname,
+        modulePath: require.resolve('./testmodule'),
         moduleName: 'testmodule'
       })
       .then(moduleName => {
@@ -27,8 +26,7 @@ describe('plv8', () => {
   describe('#uninstall', () => {
     before(() => {
       return plv8.install({
-        modulePath: 'testmodule',
-        cwd: __dirname,
+        modulePath: require.resolve('./testmodule'),
         moduleName: 'testmodule'
       })
       .then(moduleName => {
@@ -46,8 +44,7 @@ describe('plv8', () => {
   describe('#eval', () => {
     before(() => {
       return plv8.install({
-        modulePath: 'testmodule',
-        cwd: __dirname,
+        modulePath: require.resolve('./testmodule'),
         moduleName: 'testmodule'
       })
       .then(moduleName => {
@@ -64,9 +61,11 @@ describe('plv8', () => {
     it('should invoke function on installed module', () => {
       return plv8.eval(() => {
         const tm = require('testmodule')
-        return tm.hello('world')
+        return tm
+        //return tm.hello('world')
       })
       .then(result => {
+        console.log(result)
         assert.equal(result, 'helloworld')
       })
     })
