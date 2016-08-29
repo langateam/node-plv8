@@ -61,11 +61,9 @@ describe('plv8', () => {
     it('should invoke function on installed module', () => {
       return plv8.eval(() => {
         const tm = require('testmodule')
-        return tm
-        //return tm.hello('world')
+        return tm.hello('world')
       })
       .then(result => {
-        console.log(result)
         assert.equal(result, 'helloworld')
       })
     })
