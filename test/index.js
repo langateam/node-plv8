@@ -64,7 +64,7 @@ describe('plv8', () => {
         return tm.hello('world')
       })
       .then(result => {
-        assert.equal(result, 'helloworld')
+        assert.equal(result, 'helloworld required value')
       })
     })
   })
