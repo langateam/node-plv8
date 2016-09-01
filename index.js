@@ -7,6 +7,9 @@ const babelOptions = {
   presets: [
     require('babel-preset-es2015')
   ],
+  plugins: [
+    require('babel-plugin-transform-remove-console')
+  ],
   ast: false,
   babelrc: false
 }
@@ -22,6 +25,9 @@ module.exports = class PLV8 {
             global: true,
             presets: [
               require('babel-preset-es2015')
+            ],
+            plugins: [
+              require('babel-plugin-transform-remove-console')
             ],
             ast: false,
             babelrc: false
