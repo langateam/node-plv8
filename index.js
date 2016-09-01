@@ -16,7 +16,7 @@ const babelOptions = {
 
 module.exports = class PLV8 {
 
-  install ({ modulePath, moduleName }) {
+  install ({ modulePath, moduleName }, compact = false) {
     return this.init()
     .then(() => {
       return new Promise((resolve, reject) => {
@@ -30,7 +30,8 @@ module.exports = class PLV8 {
               require('babel-plugin-transform-remove-console')
             ],
             ast: false,
-            babelrc: false
+            babelrc: false,
+            compact
           })
           .require(modulePath, { entry: true })
           .bundle((err, buf) => {
@@ -73,7 +74,7 @@ module.exports = class PLV8 {
       .then(() => true)
   }
 
-  eval (f) {
+  eval (f, compact = true) {
     let es5
     const template = `
       (function () {
@@ -90,6 +91,7 @@ module.exports = class PLV8 {
       })`
 
     try {
+      babelOptions.compact = compact
       es5 = babel.transform(template.toString(), babelOptions)
     }
     catch (e) {
