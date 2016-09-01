@@ -16,7 +16,7 @@ const babelOptions = {
 
 module.exports = class PLV8 {
 
-  install ({ modulePath, moduleName }, compact = false) {
+  install ({ modulePath, moduleName }, compact = true) {
     return this.init()
     .then(() => {
       return new Promise((resolve, reject) => {
