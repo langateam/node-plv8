@@ -53,5 +53,6 @@
   "optionalDependencies": {},
   "eslintConfig": {
     "extends": "trails"
-  }
+  },
+  "license": "MIT"
 }
