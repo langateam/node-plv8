@@ -1,7 +1,7 @@
 {
   "name": "plv8",
   "description": "require() node.js modules in plv8",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "keywords": [
     "postgres",
     "postgresql",
