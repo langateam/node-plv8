@@ -115,9 +115,25 @@ module.exports = class PLV8 {
   }
 
   init () {
-    return this.knex.raw('create schema if not exists "v8"')
+    return this.knex('pg_catalog.pg_namespace').select().where({ nspname: 'v8' })
+      .then(([ schema ]) => {
+        if (schema) {
+          return
+        }
+        else {
+          return this.knex.raw('create schema if not exists "v8"')
+        }
+      })
       .then(() => {
-        return this.knex.raw('create extension if not exists plv8')
+        return this.knex('pg_available_extensions').select().where({ name: 'plv8' })
+          .then(([ ext ]) => {
+            if (ext.installed_version) {
+              return
+            }
+            else {
+              return this.knex.raw('create extension if not exists plv8')
+            }
+          })
       })
       .then(() => {
         return this.knex.schema.createTableIfNotExists('v8.modules', table => {
