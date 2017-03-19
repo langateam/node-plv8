@@ -5,16 +5,7 @@
 [![Dependency Status][daviddm-image]][daviddm-url]
 [![Code Climate][codeclimate-image]][codeclimate-url]
 
-Use node modules in [PLV8](https://github.com/plv8/plv8). Optimize your Node.js Backend by offloading work directly onto the database (PostgreSQL).
-
-This is a fork of [plv8x](https://github.com/clkao/plv8x) that has been streamlined down to the essentials. Important differences:
-
-- 90% smaller than plv8x (~20kb vs. 300+ kb)
-- Removed [node-pg-native](https://github.com/brianc/node-pg-native)
-- Removed Livescript / Coffeescript Support
-- Removed CLI
-- Removed unused/unneeded dependencies
-- Build modules using babel instead of browserify
+`require()` node modules in [PLV8](https://github.com/plv8/plv8). Optimize your Node.js Backend by offloading work directly onto the database (PostgreSQL). Send/receive events between Node and PLV8.
 
 ## Install
 
@@ -28,23 +19,38 @@ $ npm install --save plv8
 
 #### `install (module, [cwd])`
 
+Install a Node module which can be loaded into the plv8 context by using the `require()` method.
+
 #### `uninstall (module)`
+
+Remove a previously installed module.
 
 #### `eval (code)`
 
+Evaluate a block of Javascript on the fly.
+
 ### `on (event, handler)`
+
+Listen for a Postgres [NOTIFY](https://www.postgresql.org/docs/9.5/static/sql-notify.html) event, and invoke the given `handler` when the event is emitted.
 
 ### Postres API
 
 #### `require (module)`
 
+Load an installed Node module.
+
 #### `log (level, message)`
 
+Send a log message to the Node.js application.
+
 #### `emit (event, payload)`
+
+Emit an aribtrary event to the Node.js application via [NOTIFY](https://www.postgresql.org/docs/9.5/static/sql-notify.html).
 
 ### Example
 
 ```js
+// setup plv8 connection
 const PLV8 = require('plv8')
 const plv8 = new PLV8({
   client: 'pg',
@@ -53,22 +59,55 @@ const plv8 = new PLV8({
   }
 })
 
+// setup a log listener
+plv8.on('log:error', msg => {
+  console.error(msg)
+})
+
+// setup a listener
+plv8.on('user:updated', user => {
+  // do some stuff with the "user" object
+})
+
+// install the lodash module so that it can be loaded (via require()) later
 plv8.install(require.resolve('lodash'))
   .then(() => {
+
+    // eval some code
     return plv8.eval(() => {
       const _ = require('lodash')
-      return _.map([ 1, 2, 3 ], e => {
-        return e + 1
-      })
+      return _.map([ 1, 2, 3 ], e => e + 1)
     })
   })
   .then(result => {
     // result = [ 2, 3, 4 ]
   })
-  .catch(err => {
-    // handle error
-  })
 ```
+
+```js
+// send some events to the client 
+plv8.eval(() => {
+  const _ = require('lodash')
+  const veryImportantValue = _.map([ 1, 2, 3 ], e => e + 1)
+
+  // maybe I want to send this event to the client, but continue doing more things
+  plv8.emit('user:updated', {
+    username: 'tjwebb',
+    email: 'tjwebb@langa.io'
+  })
+
+  try {
+    return veryImportantValue + 1
+  }
+  catch (e) {
+    plv8.log('error', e)
+    return 0
+  }
+})
+
+```
+
+#### 2. 
 
 ## PLV8 Extension
 
@@ -79,6 +118,16 @@ $ easy_install pgxnclient
 $ pgxnclient install plv8
 ```
 
+## Forked!
+
+This is a fork of [plv8x](https://github.com/clkao/plv8x) that has been streamlined down to the essentials, and extended with additional API features. Important differences:
+
+- 90%+ smaller than plv8x (~20kb vs. 300+ kb)
+- Removed [node-pg-native](https://github.com/brianc/node-pg-native)
+- Removed Livescript / Coffeescript Support
+- Removed CLI
+- Removed unused/unneeded dependencies
+- Transpile modules using babel instead of browserify
 
 ## License
 MIT
