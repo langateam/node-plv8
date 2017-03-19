@@ -74,6 +74,26 @@ module.exports = class PLV8 {
       .then(() => true)
   }
 
+  on (event, handler) {
+    return this.knex.client.acquireRawConnection().then(c => {
+      c.on('notification', msg => {
+        if (msg.channel !== event) return
+        if (msg.payload === 'undefined') {
+          return handler(null, msg)
+        }
+
+        try {
+          handler(JSON.parse(msg.payload), msg)
+        }
+        catch (e) {
+          console.log(msg)
+          handler(null, msg)
+        }
+      })
+      c.query(`listen ${event}`)
+    })
+  }
+
   eval (f, compact = true) {
     let es5
     const template = `
