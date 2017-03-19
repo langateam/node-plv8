@@ -51,7 +51,6 @@
     "mocha": "^2.1.0",
     "pg": "^6.0.1"
   },
-  "optionalDependencies": {},
   "eslintConfig": {
     "extends": "trails"
   },
