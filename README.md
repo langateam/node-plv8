@@ -24,13 +24,23 @@ $ npm install --save plv8
 
 ## Usage
 
-### API
+### Node API
 
 #### `install (module, [cwd])`
 
 #### `uninstall (module)`
 
 #### `eval (code)`
+
+### `on (event, handler)`
+
+### Postres API
+
+#### `require (module)`
+
+#### `log (level, message)`
+
+#### `emit (event, payload)`
 
 ### Example
 
@@ -59,6 +69,16 @@ plv8.install(require.resolve('lodash'))
     // handle error
   })
 ```
+
+## PLV8 Extension
+
+This module requires the [plv8](https://pgxn.org/dist/plv8/doc/plv8.html) Postgres extension.
+
+```sh
+$ easy_install pgxnclient
+$ pgxnclient install plv8
+```
+
 
 ## License
 MIT
