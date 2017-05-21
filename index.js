@@ -1,4 +1,5 @@
 /*eslint no-console: 0 */
+const nodePlv8Schema = process.env.NODE_PLV8_SCHEMA || 'v8'
 const bootstrapPlv8 = require('./lib/bootstrap')
 const babel = require('babel-core')
 const browserify = require('browserify')
@@ -55,13 +56,13 @@ module.exports = class PLV8 {
       })
     })
     .then(code => {
-      return this.knex('v8.modules').select('*').where({ name: moduleName })
+      return this.knex(nodePlv8Schema+'.modules').select('*').where({ name: moduleName })
         .then(result => {
           if (result.length > 0) {
-            return this.knex('v8.modules').update({ code }).where({ name: moduleName })
+            return this.knex(nodePlv8Schema+'.modules').update({ code }).where({ name: moduleName })
           }
           else {
-            return this.knex('v8.modules').insert({ code, name: moduleName })
+            return this.knex(nodePlv8Schema+'.modules').insert({ code, name: moduleName })
           }
         })
     })
@@ -70,7 +71,7 @@ module.exports = class PLV8 {
 
   uninstall (moduleId) {
     const name = moduleId.replace(/^@\w+\//, '')
-    return this.knex('v8.modules').where({ name }).del()
+    return this.knex(nodePlv8Schema+'.modules').where({ name }).del()
       .then(() => true)
   }
 
@@ -135,13 +136,13 @@ module.exports = class PLV8 {
   }
 
   init () {
-    return this.knex('pg_catalog.pg_namespace').select().where({ nspname: 'v8' })
+    return this.knex('pg_catalog.pg_namespace').select().where({ nspname: nodePlv8Schema })
       .then(([ schema ]) => {
         if (schema) {
           return
         }
         else {
-          return this.knex.raw('create schema if not exists "v8"')
+          return this.knex.raw('create schema if not exists nodePlv8Schema+""')
         }
       })
       .then(() => {
@@ -156,7 +157,7 @@ module.exports = class PLV8 {
           })
       })
       .then(() => {
-        return this.knex.schema.createTableIfNotExists('v8.modules', table => {
+        return this.knex.schema.createTableIfNotExists(nodePlv8Schema+'.modules', table => {
           table.increments()
           table.text('name')
           table.text('code')
@@ -169,5 +170,6 @@ module.exports = class PLV8 {
 
   constructor (knex) {
     this.knex = knex
+    this.nodePlv8Schema = nodePlv8Schema
   }
 }
