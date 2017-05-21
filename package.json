@@ -12,6 +12,7 @@
     "require"
   ],
   "main": "index.js",
+  "bin": "./lib/cli.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/langateam/plv8.git"
