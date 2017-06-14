@@ -56,13 +56,13 @@ module.exports = class PLV8 {
       })
     })
     .then(code => {
-      return this.knex(config.pg_modules_table).select('*').where({ name: moduleName })
+      return this.knex.withSchema(config.pg_schema).select('*').from(config.pg_modules_table).where({ name: moduleName })
         .then(result => {
           if (result.length > 0) {
-            return this.knex(config.pg_modules_table).update({ code }).where({ name: moduleName })
+            return this.knex(`${config.pg_schema}.${config.pg_modules_table}`).update({ code }).where({ name: moduleName })
           }
           else {
-            return this.knex(config.pg_modules_table).insert({ code, name: moduleName })
+            return this.knex(`${config.pg_schema}.${config.pg_modules_table}`).insert({ code, name: moduleName })
           }
         })
     })
@@ -71,7 +71,7 @@ module.exports = class PLV8 {
 
   uninstall (moduleId) {
     const name = moduleId.replace(/^@\w+\//, '')
-    return this.knex(config.pg_modules_table).where({ name }).del()
+    return this.knex(`${config.pg_schema}.${config.pg_modules_table}`).where({ name }).del()
       .then(() => true)
   }
 
@@ -157,7 +157,7 @@ module.exports = class PLV8 {
           })
       })
       .then(() => {
-        return this.knex.schema.createTableIfNotExists(config.pg_modules_table, table => {
+        return this.knex.schema.withSchema(config.pg_schema).createTableIfNotExists(config.pg_modules_table, table => {
           table.increments()
           table.text('name')
           table.text('code')
