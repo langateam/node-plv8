@@ -12,6 +12,7 @@
     "require"
   ],
   "main": "index.js",
+  "bin": "./lib/cli.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/langateam/plv8.git"
@@ -27,6 +28,14 @@
       "email": "tjwebb@langa.io"
     }
   ],
+  "config": {
+    "pg_schema": "v8",
+    "pg_modules_table": "modules",
+    "pg_user": "postgres",
+    "pg_host": "localhost",
+    "pg_port": 5432,
+    "pg_database": "postgres"
+  },
   "scripts": {
     "test": "mocha"
   },
@@ -40,7 +49,9 @@
     "babel-preset-es2015": "^6.9.0",
     "babelify": "^7.3.0",
     "browserify": "^13.1.0",
-    "lodash": "^4.13.1"
+    "commander": "^2.9.0",
+    "lodash": "^4.13.1",
+    "npm-package-config": "^0.4.0"
   },
   "devDependencies": {
     "babel-preset-es2015": "^6.9.0",

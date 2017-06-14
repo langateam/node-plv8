@@ -1,4 +1,5 @@
 /*eslint no-console: 0 */
+const config = require('npm-package-config').list();
 const bootstrapPlv8 = require('./lib/bootstrap')
 const babel = require('babel-core')
 const browserify = require('browserify')
@@ -55,13 +56,13 @@ module.exports = class PLV8 {
       })
     })
     .then(code => {
-      return this.knex('v8.modules').select('*').where({ name: moduleName })
+      return this.knex.withSchema(config.pg_schema).select('*').from(config.pg_modules_table).where({ name: moduleName })
         .then(result => {
           if (result.length > 0) {
-            return this.knex('v8.modules').update({ code }).where({ name: moduleName })
+            return this.knex(`${config.pg_schema}.${config.pg_modules_table}`).update({ code }).where({ name: moduleName })
           }
           else {
-            return this.knex('v8.modules').insert({ code, name: moduleName })
+            return this.knex(`${config.pg_schema}.${config.pg_modules_table}`).insert({ code, name: moduleName })
           }
         })
     })
@@ -70,7 +71,7 @@ module.exports = class PLV8 {
 
   uninstall (moduleId) {
     const name = moduleId.replace(/^@\w+\//, '')
-    return this.knex('v8.modules').where({ name }).del()
+    return this.knex(`${config.pg_schema}.${config.pg_modules_table}`).where({ name }).del()
       .then(() => true)
   }
 
@@ -120,7 +121,7 @@ module.exports = class PLV8 {
     }
     const code = es5.code.slice(0, -1)
 
-    return this.knex.raw('select v8.eval(?) as val', [ `${code}()` ])
+    return this.knex.raw(`select ${config.pg_schema}.eval(?) as val`, [ `${code}()` ])
       .then(({ rows: [ result ] }) => {
         const val = result && result.val
         if (val && val.error === true) {
@@ -135,13 +136,13 @@ module.exports = class PLV8 {
   }
 
   init () {
-    return this.knex('pg_catalog.pg_namespace').select().where({ nspname: 'v8' })
-      .then(([ schema ]) => {
-        if (schema) {
+    return this.knex('pg_catalog.pg_namespace').select(this.knex.raw(true)).where({ nspname: config.pg_schema })
+      .then(([ exists ]) => {
+        if (exists) {
           return
         }
         else {
-          return this.knex.raw('create schema if not exists "v8"')
+          return this.knex.raw(`create schema if not exists "${config.pg_schema}"`)
         }
       })
       .then(() => {
@@ -156,7 +157,7 @@ module.exports = class PLV8 {
           })
       })
       .then(() => {
-        return this.knex.schema.createTableIfNotExists('v8.modules', table => {
+        return this.knex.schema.withSchema(config.pg_schema).createTableIfNotExists(config.pg_modules_table, table => {
           table.increments()
           table.text('name')
           table.text('code')
