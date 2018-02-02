@@ -3,6 +3,7 @@ const bootstrapPlv8 = require('./lib/bootstrap')
 const babel = require('babel-core')
 const browserify = require('browserify')
 const babelify = require('babelify')
+const knex = require('knex');
 const babelOptions = {
   presets: [
     require('babel-preset-es2015')
@@ -167,7 +168,7 @@ module.exports = class PLV8 {
       })
   }
 
-  constructor (knex) {
-    this.knex = knex
+  constructor (config) {
+    this.knex = knex(config)
   }
 }
