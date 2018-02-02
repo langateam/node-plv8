@@ -3,7 +3,7 @@ const knex = require('knex')
 const PLV8 = require('../')
 
 describe('plv8', () => {
-  const knexHandle = knex({
+  const config= {
     client: 'pg',
     connection: {
       host: process.env.PLV8_HOST,
@@ -11,8 +11,9 @@ describe('plv8', () => {
       password: process.env.PLV8_PASSWORD,
       database: process.env.PLV8_DATABASE
     }
-  })
-  const plv8 = new PLV8(knexHandle)
+  };
+  const knexHandle = knex(config)
+  const plv8 = new PLV8(config)
 
   describe('#install', () => {
     it('should install a module', () => {
